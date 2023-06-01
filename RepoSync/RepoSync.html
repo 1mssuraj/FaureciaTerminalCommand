@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Style.css">
+
+    <!-- BootStrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+
+    <title>Terminal commands</title>
+</head>
+
+<body>
+
+    <nav id="navbar_id" class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon">-</span>
+            </button>
+            <div class="collapse navbar-collapse " id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto me-auto mb-2 mb-lg-0">
+                    <li class="nav-item me-4">
+                        <a class="nav-link active " aria-current="page" href="RepoSync.html">Repo Sync</a>
+                    </li>
+                    <li class="nav-item me-4">
+                        <a class="nav-link " href="Emulator.html">Emulator</a>
+                    </li>
+                    <li class="nav-item me-4">
+                        <a class="nav-link" href="GitCommand.html">Git Commands</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="FlashDevice.html">Flash Device</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="main">
+    <aside>
+        <h6><a href="#navbar_id"><ion-icon name="home-outline"></ion-icon></a></h6>
+        <h6><a href="#bootloader"> bootloader</a></h6>
+        <h6><a href="#a7s">a7s</a></h6>
+        <h6><a href="#pulsar"> pulsar</a></h6>
+        <h6><a href="#android">Android</a></h6>
+        <h6><a href="#QtBagad">QtBagad</a></h6>
+    </aside>
+
+    <div class="container">
+
+        <h2>[SoC][How-To] Checkout, build and flash Crony2</h2>
+
+        <hr>
+        <div id="bootloader" class="divider"></div>
+        <h3><u><b>Build bootloader</b></u> </h3>
+        <br>
+        <h4>Download source code</h4>
+        <div class="codeSnippet">
+            <code onclick="copy('mkdir bootloader && cd bootloader')">mkdir bootloader && cd bootloader</code><br>
+            <code
+                onclick="copy('repo init --submodules -u ssh://gerrit.pfa.fr.corp/products/IVI/Crony2/Premium/manifest.git -m soc/bootloader.xml -b master')">repo init --submodules -u ssh://gerrit.pfa.fr.corp/products/IVI/Crony2/Premium/manifest.git -m soc/bootloader.xml -b master</code><br>
+            <span><code onclick='copy(`repo sync`)'>repo sync </code></span>
+        </div>
+        <br><br>
+        <h4>Run docker</h4>
+        <br>
+        <p>The build must be done in a docker environment. The build must be done in 32bits / ARMv8.</p>
+
+        <div class="codeSnippet">
+            <code
+                onclick="copy(`docker pull registry.pfa.fr.corp:5000/rapide/pulsar:latest-armv8`)">docker pull registry.pfa.fr.corp:5000/rapide/pulsar:latest-armv8</code><br>
+            <code
+                onclick="copy(`docker run --rm -v $(pwd):$(pwd) -w $(pwd) -it registry.pfa.fr.corp:5000/rapide/pulsar:latest-armv8 bash`)">docker run --rm -v $(pwd):$(pwd) -w $(pwd) -it registry.pfa.fr.corp:5000/rapide/pulsar:latest-armv8 bash</code>
+        </div>
+        <br><br>
+        <h4>Build bootloader</h4>
+        <br>
+        <p>Available variants are: boot_nav_eng, boot_nav_prod, boot_nonav_eng, boot_nonav_prod.</p>
+
+        <div class="codeSnippet">
+            <code
+                onclick="copy(`./build.sh pulsar_crony2 boot_nonav_eng config-update`)">./build.sh pulsar_crony2 boot_nonav_eng config-update</code><br>
+            <code
+                onclick="copy(`./build.sh pulsar_crony2 boot_nonav_eng all -j$(nproc)`)">./build.sh pulsar_crony2 boot_nonav_eng all -j$(nproc)</code>
+        </div>
+        <div id="a7s" class="divider"></div>
+        <h3><u><b>Build pulsar for a7s</b></u> </h3>
+        <br>
+        <h4>Download source code</h4>
+        <div class="codeSnippet">
+            <code onclick="copy('mkdir a7s && cd a7s')" ;>mkdir a7s && cd a7s</code><br>
+            <code
+                onclick="copy('repo init --submodules -u ssh://gerrit.pfa.fr.corp/products/IVI/Crony2/Premium/manifest.git -m soc/a7s_pulsar.xml -b master')">repo init --submodules -u ssh://gerrit.pfa.fr.corp/products/IVI/Crony2/Premium/manifest.git -m soc/a7s_pulsar.xml -b master</code><br>
+            <span>
+                <code onclick='copy(`repo sync`)'>repo sync </code></span> <span><code>&&</code>
+            </span>
+            <span>
+                <code onclick='copy(`repo forall -c "git lfs pull"`)'>repo forall -c "git lfs pull"</code>
+            </span>
+        </div>
+
+        <br><br>
+        <h4>Run docker</h4>
+
+        <p>The build must be done in a docker environment. The build must be done in 32bits / ARMv7.</p>
+        <div class="codeSnippet">
+            <code
+                onclick="copy('sudo docker pull registry.pfa.fr.corp:5000/rapide/pulsar:latest-armv7')">sudo docker pull registry.pfa.fr.corp:5000/rapide/pulsar:latest-armv7</code><br>
+            <code
+                onclick="copy('sudo docker run --rm -v $(pwd):$(pwd) -w $(pwd) -it registry.pfa.fr.corp:5000/rapide/pulsar:latest-armv7 bash')">sudo docker run --rm -v $(pwd):$(pwd) -w $(pwd) -it registry.pfa.fr.corp:5000/rapide/pulsar:latest-armv7 bash</code>
+        </div>
+        <br><br>
+        <h4> Build pulsar</h4>
+        <p>Available variants are a7s_eng and a7s_prod.</p>
+        <p>Within docker:</p>
+        <div class="codeSnippet">
+            <code
+                onclick="copy('./build.sh pulsar_crony2 a7s_eng config-update')">./build.sh pulsar_crony2 a7s_eng config-update</code><br>
+            <code
+                onclick="copy('./build.sh pulsar_crony2 a7s_eng all -j$(nproc)')">./build.sh pulsar_crony2 a7s_eng all -j$(nproc)</code>
+        </div>
+        <br>
+        <hr>
+        <div id="pulsar" class="divider"></div>
+        <h3 ><u><b>Build Pulsar (chroot) for a53</b></u></h3>
+        <h4>Download source code</h4>
+        <div class="codeSnippet">
+            <code
+                onclick="copy('mkdir pulsar_chroot && cd pulsar_chroot')">mkdir pulsar_chroot && cd pulsar_chroot</code><br>
+            <code
+                onclick="copy('repo init --submodules -u ssh://gerrit.pfa.fr.corp/products/IVI/Crony2/Premium/manifest.git -m soc/a53_chroot_pulsar.xml -b master')">repo init --submodules -u ssh://gerrit.pfa.fr.corp/products/IVI/Crony2/Premium/manifest.git -m soc/a53_chroot_pulsar.xml -b master</code><br>
+            <span><code onclick='copy(`repo sync`)'>repo sync </code></span> <span><code>&&</code></span> <span><code
+                    onclick='copy(`repo forall -c "git lfs pull"`)'>repo forall -c "git lfs pull"</code></span>
+        </div>
+        <br>
+        <h4>Run docker</h4>
+        <p>The build must be done in a docker environment. The build must be done in 32bits / ARMv8.</p>
+        <div class="codeSnippet">
+            <code
+                onclick="copy('sudo docker pull registry.pfa.fr.corp:5000/rapide/pulsar:latest-armv8')">sudo docker pull registry.pfa.fr.corp:5000/rapide/pulsar:latest-armv8</code><br>
+            <code
+                onclick="copy('sudo docker run --rm -v $(pwd):$(pwd) -w $(pwd) -it registry.pfa.fr.corp:5000/rapide/pulsar:latest-armv8 bash')">sudo docker run --rm -v $(pwd):$(pwd) -w $(pwd) -it registry.pfa.fr.corp:5000/rapide/pulsar:latest-armv8 bash</code>
+        </div>
+        <br>
+        <h4>Build pulsar (chroot)</h4>
+        <p>Available variants are a53_chroot_eng and a53_chroot_prod.</p>
+        <div class="codeSnippet">
+            <code
+                onclick="copy('./build.sh pulsar_crony2 a53_chroot_eng config-update')">./build.sh pulsar_crony2 a53_chroot_eng config-update</code><br>
+            <code
+                onclick="copy('./build.sh pulsar_crony2 a53_chroot_eng all -j$(nproc)')">./build.sh pulsar_crony2 a53_chroot_eng all -j$(nproc)</code>
+        </div>
+        <br>
+        <hr>
+        <div id="android" class="divider"></div>
+        <h3><u><b>Build Kernel and Android for a53</b></u></h3>
+        <br>
+        <div class="infoblock"><ion-icon name="information-circle-outline"></ion-icon>From now on, the placeholder
+            <build_target> can be either crony2_nav or crony2_no_nav.
+        </div>
+        <br>
+        <h4>Download source code</h4>
+        <div class="codeSnippet">
+            <code onclick="copy('mkdir android && cd android')">mkdir android && cd android</code><br>
+            <code
+                onclick="copy('repo init --submodules -u ssh://gerrit.pfa.fr.corp/products/IVI/Crony2/Premium/manifest.git -m soc/a53_android.xml -b master')">repo init --submodules -u ssh://gerrit.pfa.fr.corp/products/IVI/Crony2/Premium/manifest.git -m soc/a53_android.xml -b master</code><br>
+            <span><code onclick='copy(`repo sync`)'>repo sync </code></span> <span><code>&&</code></span> <span><code
+                    onclick='copy(`repo forall -c "git lfs pull"`)'>repo forall -c "git lfs pull"</code></span>
+        </div>
+        <br>
+        <h4>Run docker</h4>
+        <p>The build must be done in a docker environment. Following instruction must be done every time you build:</p>
+        <div class="codeSnippet">
+            <code
+                onclick="copy('sudo docker pull registry.pfa.fr.corp:5000/rapide/android:latest')">sudo docker pull registry.pfa.fr.corp:5000/rapide/android:latest</code>
+            <br>
+            <br>
+            <span
+                onclick="copy('export PULSAR_PATH=$(realpath ../pulsar_chroot)\nexport PULSAR_VARIANT=a53_chroot_eng\nexport A7S_PATH=$(realpath ../a7s)\nexport A7S_VARIANT=a7s_eng')">
+                <code># export paths to pulsar workspaces</code><br>
+                <code>export PULSAR_PATH=$(realpath ../pulsar_chroot)</code><br>
+                <code>export PULSAR_VARIANT=a53_chroot_eng</code><br>
+                <code>export A7S_PATH=$(realpath ../a7s)</code><br>
+                <code>export A7S_VARIANT=a7s_eng</code>
+            </span>
+
+            <br><br>
+            <code
+                onclick="copy('sudo docker run --privileged -v /dev/bus/usb:/dev/bus/usb --rm -v $(pwd):$(pwd) -v $PULSAR_PATH:/pulsar -v $A7S_PATH:/a7s -w $(pwd) -e BOARD_PREBUILT_PULSAR_ARCHIVE=/pulsar/out/pulsar_crony2-${PULSAR_VARIANT}/pulsar_crony2-${PULSAR_VARIANT}.tar.gz -e BOARD_PREBUILT_A7S_PATH=/a7s/out/pulsar_crony2-${A7S_VARIANT} -it registry.pfa.fr.corp:5000/rapide/android:latest bash')">sudo docker run --privileged -v /dev/bus/usb:/dev/bus/usb --rm -v $(pwd):$(pwd) -v $PULSAR_PATH:/pulsar -v $A7S_PATH:/a7s -w $(pwd) -e BOARD_PREBUILT_PULSAR_ARCHIVE=/pulsar/out/pulsar_crony2-${PULSAR_VARIANT}/pulsar_crony2-${PULSAR_VARIANT}.tar.gz -e BOARD_PREBUILT_A7S_PATH=/a7s/out/pulsar_crony2-${A7S_VARIANT} -it registry.pfa.fr.corp:5000/rapide/android:latest bash</code>
+        </div>
+        <br>
+        <p>If you don't need to update a7s images, you can remove "-v $A7S_PATH:/a7s" and "-e
+            BOARD_PREBUILT_A7S_PATH=/a7s/out/pulsar_crony2-${A7S_VARIANT}" from the docker run command</p>
+
+        <h4>Setup Android environment</h4>
+
+        <div class="codeSnippet">
+            <div style="justify-content: space-between;">
+                <code onclick="copy('source build/envsetup.sh')">source build/envsetup.sh</code> <code
+                    onclick="copy('make -j$(nproc)')">make -j$(nproc)</code><br>
+            </div>
+
+            <code onclick="copy('lunch crony2_no_nav-userdebug')">lunch crony2_no_nav-userdebug</code>
+        </div>
+        <br>
+        <h4>Build the kernel</h4>
+        <p>Within docker:</p>
+
+        <div class="codeSnippet">
+            <code># Enter kernel folder, "root" folder for the build of the Kernel</code><br>
+            <code onclick="copy('cd kernel')">cd kernel</code>
+            <br><br>
+            <code># Build the kernel</code><br>
+            <code
+                onclick="copy('make ARCH=arm KCONFIG_CONFIG=../device/parrot/crony2/crony2_no_nav/eng_kernel_config -j$(nproc)')">make ARCH=arm KCONFIG_CONFIG=../device/parrot/crony2/crony2_no_nav/eng_kernel_config -j$(nproc)</code>
+            <br><br>
+            <code># Mandatory, build Cypress driver</code><br>
+            <code
+                onclick="copy('cd .. && ./device/parrot/crony2/soc/software/build_cypress.sh')">cd .. && ./device/parrot/crony2/soc/software/build_cypress.sh</code>
+        </div>
+        <br>
+
+        <h4>Build Android</h4>
+        <p>Within docker:</p>
+        <div class="codeSnippet">
+            <code onclick="copy('make -j$(nproc)')">make -j$(nproc)</code>
+        </div>
+        <hr>
+
+        <div id="QtBagad" class="divider"></div>
+        <h3><u>Build QtBagad</u> </h3>
+
+        <h4>Download source code</h4>
+        <div class="codeSnippet">
+            <code onclick="copy('mkdir qtbagad && cd qtbagad')">mkdir qtbagad && cd qtbagad</code><br>
+            <code
+                onclick="copy('repo init --submodules -u ssh://gerrit.pfa.fr.corp/products/IVI/Crony2/Premium/manifest.git -m host/qtbagad.xml -b master')">repo init --submodules -u ssh://gerrit.pfa.fr.corp/products/IVI/Crony2/Premium/manifest.git -m host/qtbagad.xml -b master</code><br>
+            <span><code onclick='copy(`repo sync`)'>repo sync </code></span>
+        </div>
+        <br>
+        <h4>Run docker</h4>
+        <p>The build must be done in a docker environment.</p>
+
+        <div class="codeSnippet">
+            <code
+                onclick="copy('docker pull registry.pfa.fr.corp:5000/rapide/qtbagad:latest')">docker pull registry.pfa.fr.corp:5000/rapide/qtbagad:latest</code><br>
+            <code
+                onclick="copy(`docker run --rm -v $(pwd):$(pwd) -w $(pwd) -it registry.pfa.fr.corp:5000/rapide/qtbagad:latest bash`)">docker run --rm -v $(pwd):$(pwd) -w $(pwd) -it registry.pfa.fr.corp:5000/rapide/qtbagad:latest bash</code>
+        </div>
+
+        <br>
+        <h4>Build QtBagad</h4>
+        <p>Within docker:</p>
+
+        <div class="codeSnippet">
+            <code
+                onclick="copy(`./build.sh pulsar_crony2 qtbagad -j$(nproc)`)">./build.sh pulsar_crony2 qtbagad -j$(nproc)</code>
+        </div>
+
+        <hr>
+        <hr>
+        <div class="codeSnippet">
+            <code
+                onclick="copy(`export HTTP_PROXY=1mssuraj:Client@1234%@proxy.standard.corp:8080`)">export HTTP_PROXY=1mssuraj:Client@1234%@proxy.standard.corp:8080</code><br>
+            <code
+                onclick="copy(`export HTTPS_PROXY=1mssuraj:Client@1234%@proxy.standard.corp:8080`)">export HTTPS_PROXY=1mssuraj:Client@1234%@proxy.standard.corp:8080</code>
+        </div>
+
+    </div>
+
+</section>
+
+    <div class="alert">
+        <p>Text Copied</p>
+    </div>
+
+
+    <div class="prompt">
+        <form>
+            <fieldset>
+                <legend>Please select ticket type</legend>
+                <br><br>
+                <div>
+                    <input type="radio" id="DEV" name="ticket_type" value="DEV" />
+                    <label for="contactChoice2">DEV</label>
+
+                    <input type="radio" id="BUGFIX" name="ticket_type" value="BUGFIX" />
+                    <label for="contactChoice1">BUGFIX</label>
+
+                </div>
+                <div>
+
+                    <br><br>
+                    <button id="submit_button" type="submit">Submit</button>
+                </div>
+            </fieldset>
+        </form>
+
+    </div>
+
+    <!-- Bootstrap script -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+        crossorigin="anonymous"></script>
+
+    <script src="script.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+
+</html>
